@@ -1,13 +1,52 @@
-Version: 1.0
+flowchart TD
 
-RestoreWorkspace: Default
-SaveWorkspace: Default
-AlwaysSaveHistory: Default
+%% ===== Top Event =====
+T["SkyGrip mission failure:<br/>cannot safely pick & place object"]
 
-EnableCodeIndexing: Yes
-UseSpacesForTab: Yes
-NumSpacesForTab: 2
-Encoding: UTF-8
+%% ===== Gates (keep the SVGs) =====
+G1[G1<img src="https://raw.githubusercontent.com/timothyfraser/sigma/refs/heads/main/images/gate_or.svg"  style="height: 50px;"></img>]  %% Top: OR
+G2[G2<img src="https://raw.githubusercontent.com/timothyfraser/sigma/refs/heads/main/images/gate_and.svg" style="height: 50px;"></img>]  %% Flight control failure needs BOTH
+G3[G3<img src="https://raw.githubusercontent.com/timothyfraser/sigma/refs/heads/main/images/gate_or.svg"  style="height: 50px;"></img>]  %% Gripper OR failures
+G4[G4<img src="https://raw.githubusercontent.com/timothyfraser/sigma/refs/heads/main/images/gate_or.svg"  style="height: 50px;"></img>]  %% Power/Comms OR failures
 
-RnwWeave: Sweave
-LaTeX: pdfLaTeX
+%% ===== Basic events (edit wording as you like) =====
+p1(("IMU miscalibration"))
+p2(("Controller gains wrong<br/>(PID/PD tuning)"))
+p3(("Belt/slider jam on gripper"))
+p4(("Gripper motor overcurrent<br/>/ stall"))
+p5(("Limit switch / sensor fault"))
+p6(("Battery undervoltage"))
+p7(("Power connector loose"))
+p8(("Radio link loss"))
+p9(("EMI / interference near testbed"))
+
+%% ===== Structure (edges) =====
+T --- G1
+G1 --- G2
+G1 --- G3
+G1 --- G4
+
+%% Flight control needs BOTH issues to lose control (AND)
+G2 --- p1
+G2 --- p2
+
+%% Gripper subsystem fails if ANY of these occur (OR)
+G3 --- p3
+G3 --- p4
+G3 --- p5
+
+%% Power/Comms fails if ANY occur (OR)
+G4 --- p6
+G4 --- p7
+G4 --- p8
+G4 --- p9
+
+%% ===== Styling =====
+class T top;
+classDef top fill:white,stroke:black;
+
+class G1,G2,G3,G4 gates;
+class p1,p2,p3,p4,p5,p6,p7,p8,p9 nodes;
+
+classDef gates fill:#FFFFFF,stroke:#FFFFFF,stroke-width:0px;
+classDef nodes fill:lightgrey,stroke:#373737,stroke-width:0px;
